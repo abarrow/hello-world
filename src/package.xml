@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>LIPP_RegistrationHandler</members>
+        <members>PartnerReferralController</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>CommunityPartnerReferralsPublicPage</members>
+        <members>CommunityPartnerReferrals_SuccessPage</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
+        <members>EMEACommunity_OnboardNewUser</members>
+        <members>PartnerCommunity_MyAccountComponent</members>
+        <name>AuraDefinitionBundle</name>
+    </types>
+    <types>
+        <members>Account.PartnerCommTermsAndCondsAcceptedBy__c</members>
+        <members>Account.PartnerCommTermsAndCondsAccepted__c</members>
+        <name>CustomField</name>
+    </types>
+    <version>39.0</version>
+</Package>

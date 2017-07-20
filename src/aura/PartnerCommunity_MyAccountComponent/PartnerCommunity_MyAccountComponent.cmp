@@ -1,0 +1,123 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" 
+                access="global" 
+                controller="PartnerCommunity_MyAccountController">
+    <!-- Handler Methods -->
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+    <!-- Attributes -->
+    <aura:attribute name="con" type="Contact" default="{ 'sobjectType': 'Contact' }"/>
+    <aura:attribute name="readonly" type="boolean" default="true"/>    
+    <div class="slds-form slds-form_compound">
+        <fieldset class="slds-form-element">
+            <legend class="slds-form-element__label slds-text-title_caps">Profile Information</legend>
+            <div class="slds-form-element__group">
+                <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <ui:inputText aura:id="firstName" label="First Name"
+                                      class="slds-input"
+                                      labelClass="slds-form-element__label"
+                                      value="{!v.con.FirstName}"
+                                      disabled="true"/>
+                    </div>
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <ui:inputText aura:id="lastName" label="Last Name"
+                                      class="slds-input"
+                                      labelClass="slds-form-element__label"
+                                      value="{!v.con.LastName}"
+                                      disabled="true"/>
+                    </div>
+                </div>
+                <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <ui:inputText aura:id="email" label="Email"
+                                      class="slds-input"
+                                      labelClass="slds-form-element__label"
+                                      value="{!v.con.Email}"
+                                      disabled="true"/>
+                    </div>
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <label class="slds-form-element__label" for="input-02">Phone Number</label>
+                        <input type="text" id="input-02" class="slds-input" disabled="true"/>
+                    </div>
+                </div>
+                <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <ui:inputText aura:id="title" label="Title"
+                                      class="slds-input"
+                                      labelClass="slds-form-element__label"
+                                      value="{!v.con.Title}"
+                                      disabled="true"/>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <br/>
+        <fieldset class="slds-form-element">
+            <legend class="slds-form-element__label slds-text-title_caps">Account Information
+                <button class="slds-button" onclick="{!c.editAccount}"> - Edit</button>
+            </legend>
+            <div class="slds-form-element__group">
+                <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size_1-of-1">
+                        <ui:inputText aura:id="companyName" label="Company Name"
+                                      class="slds-input"
+                                      labelClass="slds-form-element__label"
+                                      value="{!v.con.Account.Name}"
+                                      disabled="true"/>
+                    </div>
+                </div>
+                <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <ui:inputText aura:id="companyURL" label="Company URL"
+                                      class="slds-input"
+                                      labelClass="slds-form-element__label"
+                                      value="{!v.con.Account.Website}"
+                                      disabled="{!v.readonly}"/>
+                    </div>
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <ui:inputText aura:id="country" label="Country"
+                                      class="slds-input"
+                                      labelClass="slds-form-element__label"
+                                      value="{!v.con.Account.BillingCountry}"
+                                      disabled="{!v.readonly}"/>
+                    </div>
+                </div>
+                <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <ui:inputText aura:id="yearBusiness" label="Year Business Established"
+                                      class="slds-input"
+                                      labelClass="slds-form-element__label"
+                                      value="{!v.con.Account.Year_established__c}"
+                                      disabled="{!v.readonly}"/>
+                    </div>
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <ui:inputText aura:id="yearBusiness" label="Partner Type"
+                                      class="slds-input"
+                                      labelClass="slds-form-element__label"
+                                      value="{!v.con.Account.Partner_Type__c}"
+                                      disabled="true"/>
+                    </div>
+                </div>
+                <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <label class="slds-form-element__label" for="input-06">Partnership Level</label>
+                        <input type="text" id="input-06" class="slds-input" disabled="true"/>
+                    </div>
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <label class="slds-form-element__label" for="input-05">Agreement</label>
+                        <input type="text" id="input-05" class="slds-input" disabled="true"/>
+                    </div>
+                </div>
+                <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <label class="slds-form-element__label" for="input-06">Primary Business Focus</label>
+                        <input type="text" id="input-06" class="slds-input" disabled="true"/>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div class="{!v.readonly == false ? 'slds-grid slds-grid_align-center' : 'slds-hide'}" >
+            <lightning:button variant="neutral" label="Cancel" onclick="{!c.cancel}" />
+            <lightning:button variant="brand" label="Save" onclick="{!c.cancel}"/>
+        </div>
+    </div>
+</aura:component>

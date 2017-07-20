@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>PartnerCommTermsAndCondsAcceptedBy__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>PartnerCommTermsAndCondsAcceptedBy</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Accountsdxhk</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>PartnerCommTermsAndCondsAccepted__c</fullName>
+        <externalId>false</externalId>
+        <label>PartnerCommTermsAndCondsAccepted</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>DateTime</type>
+    </fields>
+</CustomObject>

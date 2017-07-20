@@ -1,0 +1,17 @@
+.THIS {
+}
+.THIS .slds-button-custom {
+    position: relative;
+    display: inline-block;
+    padding: 0;
+    background-clip: border-box;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    font-size: 1.00rem;
+    line-height: 2.875rem !important;
+    width: 30.0rem;
+}
+
+.THIS .slds-modal__container {
+    max-width: 80rem !important;
+}

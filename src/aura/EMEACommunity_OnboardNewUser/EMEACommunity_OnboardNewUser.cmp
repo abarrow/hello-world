@@ -1,0 +1,359 @@
+<aura:component implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                access="global" 
+                controller="LIPP_RegistrationHandler">
+    <!-- handler -->
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/> <!-- Initializing the referral record-->
+    <aura:handler name="change" value="{!v.companyRegNo}" action="{!c.onChangeCompanyReg}"/> <!-- Fetching the address from Kycker -->
+    <aura:handler name="change" value="{!v.countryCode}" action="{!c.onChangeCountryCode}"/> <!-- Fetching the address from Kycker -->
+    
+    <!-- Use the boolean attribute to display the modal --> 
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:attribute name="buttonName" type="String" default="New User Onboard"/>
+    <aura:attribute name="companyRegNo" type="String" default=""/>
+    <aura:attribute name="countryCode" type="String" default="UK"/>
+    <aura:attribute name="stAddr1" type="String" default=""/>
+    <aura:attribute name="stAddr2" type="String" default=""/>
+    <aura:attribute name="city" type="String" default=""/>
+    <aura:attribute name="state" type="String" default=""/>
+    <aura:attribute name="countryList" type="List" />
+    <aura:attribute name="country" type="String" default=""/> <!-- redundant-->
+    <aura:attribute name="postalCode" type="String" default=""/>
+    <aura:attribute name="partnerType" type="String" default=""/>
+    <aura:attribute name="partnerSubType" type="String" default=""/>
+    <aura:attribute name="partnerSubTypeLabel" type="String"/>
+    <aura:attribute name="businessVolumeLabel" type="String"/>
+    <aura:attribute name="companyName" type="String" default=""/>
+    <aura:attribute name="disableCompanyName" type="boolean" default="{!true}"/>
+    <aura:attribute name="userFirstName" type="String"/>
+    <aura:attribute name="companyURL" type="String" default="https://www."/>
+    <aura:attribute name="yearBusiness" type="Integer"/>
+    <aura:attribute name="primaryEmail" type="String"/>
+    <aura:attribute name="percentageCustomers" type="Decimal"/>
+    <aura:attribute name="averageSalesVolume" type="Integer"/>
+    <aura:attribute name="businessVolume" type="Integer"/>
+    <aura:attribute name="displayAddQstns" type="boolean" default="{!true}"/>
+    <aura:attribute name="submitButtonName" type="String" default="Next" />
+    <aura:attribute name="displayOtherField" type="boolean" default="{!false}" />
+    <aura:attribute name="displaySolIntField" type="boolean" default="{!false}" />
+    <aura:attribute name="otherValue" type="String" />
+    <aura:attribute name="solIntValue" type="String" />
+    <aura:attribute name="progressText" type="String" default="(step 1/2)" />
+    <aura:attribute name="termCondition" type="Boolean" default="{!false}" />
+    <aura:attribute name="selectedCountry" type="String" default="United Kingdom" />
+    <!--loading spinner start-->
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <aura:if isTrue="{!v.spinner}">
+        <lightning:spinner variant="brand" size="medium"/>
+    </aura:if>
+    <!-- [Bhargav] - This button is added for Onboarding POC, will be removed soon. There is no close button in the modal window that opens on click of this button, refresh the page to come out of it. -->
+    <div class="slds-m-around--xx-large slds-container--left">
+        <!--<button class="slds-button " onclick="{!c.openModel}">{!v.buttonName}</button>-->
+        <c:Modal aura:id="modal" id="referral-modal" isOpen="{!v.isOpen}" showClose="false">
+            <aura:set attribute="header">
+                <h2 id="header99" class="slds-text-heading--medium">
+                    Welcome {!v.userFirstName} &nbsp; {!v.progressText}
+                </h2>
+                <br/>
+                Thank you for enrolling in the PayPal partner program. <br/>
+                We need additional information to setup your account. Please fill in the below details and submit.
+            </aura:set>
+            <!--###### MODAL BOX BODY Part Start From Here ######-->
+            <aura:set attribute="body">
+                <aura:if isTrue="{!(v.displayAddQstns) == false}">
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <lightning:button label="Back" iconName="utility:back" iconPosition="left" onclick="{!c.back}" /> <br/><br/>
+                        <fieldset class="slds-form--compound slds-box slds-theme--default slds-container--medium">
+                            <legend class="slds-form-element__label slds-text-title--caps">Additional Information</legend>
+                            <div class="slds-form-element slds-is-required">
+                                <div class="slds-form-element__group">
+                                    <div class="slds-form-element__row">
+                                        <div class="slds-form-element slds-size--1-of-2">
+                                            <label class="slds-form-element__label slds-align-middle" for="form-help">
+                                                <abbr class="slds-required" title="required">*</abbr>
+                                                Company URL
+                                            </label>
+                                            <ui:inputURL aura:id="companyURL"
+                                                         class="slds-input"
+                                                         value="{!v.companyURL}"/>
+                                        </div>
+                                        <div class="slds-form-element slds-size--2-of-2">
+                                            <label class="slds-form-element__label slds-align-middle" for="form-help">
+                                                <abbr class="slds-required" title="required">*</abbr>
+                                                Average Merchant/Client Sales Volume Per Year (£)
+                                            </label>
+                                            <ui:inputSelect aura:id="averageSalesVolume"
+                                                            class="slds-input"
+                                                            labelClass="slds-form-element__label"
+                                                            value="{!v.averageSalesVolume}">
+                                            </ui:inputSelect>
+                                        </div>
+                                    </div>
+                                    <div class="slds-form-element__row">
+                                        <div class="slds-form-element slds-size--1-of-2">
+                                            <label class="slds-form-element__label slds-align-middle" for="form-help">
+                                                <abbr class="slds-required" title="required">* </abbr>
+                                                {!v.businessVolumeLabel}
+                                            </label>
+                                            <ui:inputNumber aura:id="businessVolume"
+                                                            class="slds-input"
+                                                            labelClass="slds-form-element__label"
+                                                            value="{!v.businessVolume}"/>
+                                        </div>
+                                        <div class="slds-form-element slds-size--2-of-2">
+                                            <label class="slds-form-element__label slds-align-middle" for="form-help">
+                                                <abbr class="slds-required" title="required">*</abbr>
+                                                {!' Percentage of customers located in ' + v.country}
+                                            </label>
+                                            <ui:inputNumber aura:id="percentageCustomers"
+                                                            class="slds-input"
+                                                            labelClass="slds-form-element__label"
+                                                            value="{!v.percentageCustomers}"/>
+                                        </div>
+                                    </div>
+                                    <div class="slds-form-element__row">
+                                        <div class="slds-form-element slds-size--1-of-2">
+                                            <label class="slds-form-element__label slds-align-middle" for="form-help">
+                                                <abbr class="slds-required" title="required">* </abbr>
+                                                {!v.partnerSubTypeLabel}
+                                            </label>
+                                            <c:strike_tooltip placement="right"
+                                                              text="Select multiple values by holding ctrl+key or cmnd+key">
+                                                <lightning:icon iconName="utility:info" size="xx-small"/>
+                                            </c:strike_tooltip>
+                                            <div class="slds-form-element__control">
+                                                <ui:inputSelect aura:id="partnerSubType"
+                                                                class="slds-input"
+                                                                labelClass="slds-form-element__label"
+                                                                multiple="true"
+                                                                value="{!v.partnerSubType}"
+                                                                change="{!c.selectPartnerSubType}">
+                                                </ui:inputSelect>
+                                            </div>
+                                        </div>
+                                        <aura:if isTrue="{! and(v.displayOtherField, not(v.displaySolIntField))}">
+                                            <div class="slds-form-element slds-size--2-of-2">
+                                                <label class="slds-form-element__label slds-align-middle" for="form-help">
+                                                    <abbr class="slds-required" title="required">*</abbr>
+                                                    Other, please specify
+                                                </label>
+                                                <ui:inputText aura:id="otherValue"
+                                                              class="slds-input"
+                                                              labelClass="slds-form-element__label"
+                                                              value="{!v.otherValue}"/>
+                                            </div>
+                                        </aura:if>
+                                        <aura:if isTrue="{! and(not(v.displayOtherField), v.displaySolIntField)}">
+                                            <div class="slds-form-element slds-size--2-of-2">
+                                                <label class="slds-form-element__label slds-align-middle" for="form-help">
+                                                    <abbr class="slds-required" title="required">*</abbr>
+                                                    Name System(s)
+                                                </label>
+                                                <ui:inputText aura:id="sysIntegrator"
+                                                              class="slds-input"
+                                                              labelClass="slds-form-element__label"
+                                                              value="{!v.solIntValue}"/>
+                                            </div>
+                                        </aura:if>
+                                        <aura:if isTrue="{! and(v.displayOtherField, v.displaySolIntField)}">
+                                            <div class="slds-form-element slds-size--2-of-2">
+                                                <label class="slds-form-element__label slds-align-middle" for="form-help">
+                                                    <abbr class="slds-required" title="required">*</abbr>
+                                                    Other, please specify
+                                                </label>
+                                                <ui:inputText aura:id="otherValue"
+                                                              class="slds-input"
+                                                              labelClass="slds-form-element__label"
+                                                              value="{!v.otherValue}"/>
+                                                <label class="slds-form-element__label slds-align-middle" for="form-help">
+                                                    <abbr class="slds-required" title="required">*</abbr>
+                                                    Name System(s)
+                                                </label>
+                                                <ui:inputText aura:id="sysIntegrator"
+                                                              class="slds-input"
+                                                              labelClass="slds-form-element__label"
+                                                              value="{!v.solIntValue}"/>
+                                            </div>
+                                        </aura:if>
+                                    </div>
+                                    <div class="slds-form-element__row">
+                                        <div class="slds-form-element slds-size--1-of-2">
+                                            <label for="checkid"  style="word-wrap:break-word">
+                                                <abbr class="slds-required" title="required">* </abbr>
+                                                <input id="termCondition" aura:id="termConditionAura" type="checkbox"/>
+                                                I agree to PayPal
+                                                <a href="https://www.paypal.com/uk/webapps/mpp/ua/privacy-full" target="_blank"> Terms and Conditions. </a>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{!(v.displayAddQstns) == true}">
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <fieldset class="slds-form--compound slds-box slds-theme--default slds-container--medium">
+                            <legend class="slds-form-element__label slds-text-title--caps">Find Your Company</legend>
+                            <div class="slds-form-element slds-is-required">
+                                <div class="slds-form-element__group">
+                                    <div class="slds-form-element__row">
+                                        <div class="slds-form-element slds-size--1-of-2">
+                                            <ui:inputText aura:id="lookupCountry" label="Country"
+                                                          class="slds-input"
+                                                          labelClass="slds-form-element__label"
+                                                          value="United Kingdom"
+                                                          disabled="true"/>
+                                            <!--<c:strike_lookup label="Country"
+                                                                 object="Country__c"
+                                                                 searchField="Full_Country_Name__c"
+                                                                 placeholder="United Kingdom"
+                                                                 subtitleField="Name"
+                                                                 order="Name"
+                                                                 limit="15"
+                                                                 loadingMessage="Loading..."
+                                                                 errorMessage="Invalid input"
+                                                                 showRecentRecords="true"
+                                                                 value="{!v.countryCode}"/>-->
+                                        </div>
+                                        <div class="slds-form-element slds-size--2-of-2">
+                                            <c:strike_lookup label="Company"
+                                                             object="Referral__c"
+                                                             searchField="Name"
+                                                             placeholder="Enter company, ex-PayPal"
+                                                             iconName="standard:account"
+                                                             order="Name"
+                                                             limit="15"
+                                                             loadingMessage="Loading..."
+                                                             errorMessage="Invalid input"
+                                                             showRecentRecords="true"
+                                                             value="{!v.companyRegNo}"
+                                                             KickerField="true"
+                                                             filter="{!v.countryCode}"/>
+                                        </div>
+                                    </div>
+                                    <!-- <button class="slds-button slds-button_neutral" onclick="{!c.onChangeCompanyReg}">Select</button> -->
+                                </div>
+                            </div>
+                        </fieldset>
+                        <!-- </form> -->
+                        <br/>
+                        <div class="slds-align_absolute-center"><h2 id="header99" class="slds-text-heading--medium">--OR--</h2></div>
+                        <br/>
+                        <fieldset class="slds-form--compound slds-box slds-theme--default slds-container--medium">
+                            <legend class="slds-form-element__label slds-text-title--caps">Enter Company Information</legend>
+                            <div class="slds-form-element slds-is-required">
+                                <div class="slds-form-element__group">
+                                    <div class="slds-form-element__row">
+                                        <div class="slds-form-element slds-size--1-of-2">
+                                            <label class="slds-form-element__label slds-align-middle" for="form-help">
+                                                <abbr class="slds-required" title="required">*</abbr>
+                                                Company Name
+                                            </label>
+                                            <ui:inputText aura:id="companyName"
+                                                          class="slds-input"
+                                                          labelClass="slds-form-element__label"
+                                                          value="{!v.companyName}"/>
+                                        </div>
+                                        <div class="slds-form-element slds-size--2-of-2">
+                                            <label class="slds-form-element__label slds-align-middle" for="form-help">
+                                                <abbr class="slds-required" title="required">*</abbr>
+                                                Partner Type
+                                            </label>
+                                            <c:strike_tooltip placement="left"
+                                                              text="Solutions Partners - businesses who offer PayPal payments as an integrated part of a commerce solution. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Agency and Development Partners – businesses who supports its clients by providing integration and development support to enable PayPal.">
+                                                <lightning:icon iconName="utility:info" size="xx-small"/>
+                                            </c:strike_tooltip>
+                                            <div class="slds-form-element__control">
+                                                <ui:inputSelect aura:id="partnerType"
+                                                                class="slds-input"
+                                                                labelClass="slds-form-element__label">
+                                                    <ui:inputSelectOption label="--Select One--" value="--Select One--" text="--Select One--"/>    
+                                                    <ui:inputSelectOption label="Solutions Partner" value="Solution Partner" text="Solution Partner"/>    
+                                                    <ui:inputSelectOption label="Web Agency and Development Partner" value="Agency Partner" text="Agency Partner"/>
+                                                </ui:inputSelect>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="slds-form-element__row">
+                                        <div class="slds-form-element slds-size--1-of-2">
+                                            <label class="slds-form-element__label slds-align-middle" for="form-help">
+                                                <abbr class="slds-required" title="required">*</abbr>
+                                                Street Address Line 1
+                                            </label>
+                                            <ui:inputText aura:id="stAddr1"
+                                                          class="slds-input"
+                                                          labelClass="slds-form-element__label"
+                                                          value="{!v.stAddr1}"/>
+                                        </div>
+                                        <div class="slds-form-element slds-size--2-of-2">
+                                            <ui:inputText aura:id="stAddr2" label="Street Address Line 2"
+                                                          class="slds-input"
+                                                          labelClass="slds-form-element__label"
+                                                          value="{!v.stAddr2}"/>
+                                        </div>
+                                    </div>
+                                    <div class="slds-form-element__row">
+                                        <div class="slds-form-element slds-size--1-of-2">
+                                            <label class="slds-form-element__label slds-align-middle" for="form-help">
+                                                <abbr class="slds-required" title="required">*</abbr>
+                                                City
+                                            </label>
+                                            <ui:inputText aura:id="city"
+                                                          class="slds-input"
+                                                          labelClass="slds-form-element__label"
+                                                          value="{!v.city}"/>
+                                        </div>
+                                        <div class="slds-form-element slds-size--2-of-2">
+                                            <label class="slds-form-element__label slds-align-middle" for="form-help">
+                                                <abbr class="slds-required" title="required">*</abbr>
+                                                State / County
+                                            </label>
+                                            <ui:inputText aura:id="state"
+                                                          class="slds-input"
+                                                          labelClass="slds-form-element__label"
+                                                          value="{!v.state}"/>
+                                        </div>
+                                    </div>
+                                    <div class="slds-form-element__row">
+                                        <div class="slds-form-element slds-size--1-of-2">
+                                            <ui:inputText aura:id="country" label="Country"
+                                                          class="slds-input"
+                                                          labelClass="slds-form-element__label"
+                                                          value="{!v.selectedCountry}"
+                                                          disabled="true"/>
+                                            <!--<lightning:select name="country" label="Country" required="true"
+                                                              aura:id="country" value="{!v.selectedCountry}">
+                                                <aura:iteration items="{!v.countryList}" var="item">
+                                                    <option text="{!item.label}" value="{!item.value}" selected="{!v.selectedCountry}"/>
+                                                </aura:iteration>
+                                            </lightning:select>-->
+                                        </div>
+                                        <div class="slds-form-element slds-size--2-of-2">
+                                            <label class="slds-form-element__label slds-align-middle" for="form-help">
+                                                <abbr class="slds-required" title="required">*</abbr>
+                                                Postal Code
+                                            </label>
+                                            <ui:inputText aura:id="postalCode"
+                                                          class="slds-input"
+                                                          labelClass="slds-form-element__label"
+                                                          value="{!v.postalCode}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <!-- country selected - {!v.countryCode}, KickerCompanyRegNo - {!v.companyRegNo} -->
+                        <!-- </form> -->
+                    </div>
+                </aura:if>
+            </aura:set>
+            <!-- ### Footer -->
+            <aura:set attribute="footer">
+                <div class="slds-grid slds-grid--align-center">
+                    <!-- <button class="slds-button" onclick="{!c.back}">Back</button> -->
+                    <button class="slds-button-custom slds-button--brand slds-order--3" onclick="{!c.buttonController}">{!v.submitButtonName}</button>
+                </div>
+            </aura:set>
+        </c:Modal>
+    </div>
+</aura:component>

@@ -1,0 +1,54 @@
+<apex:page controller="PartnerReferralController" showHeader="false" sidebar="false" standardStylesheets="false">
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <head>
+            <apex:slds />
+        </head>
+        <style type="text/css">
+            .slds-modal {
+                background-color: #F4F4F4;
+            }
+            .slds-notify_container{
+                top: 8rem !important;
+            }
+            .slds-scope .slds-theme--default {
+                color: red;
+            }
+            .slds-scope .slds-modal__header {
+                color: black;
+            }
+            .slds-scope {
+                color: red;
+            }
+            .slds-button-custom {
+                position: relative;
+                display: inline-block;
+                padding: 0;
+                background: 0 0;
+                background-clip: border-box;
+                border: 1px solid transparent;
+                border-radius: .25rem;
+                font-size: 1.00rem;
+                line-height: 2.875rem !important;
+                width: 30.0rem;
+            }
+        </style>
+        <div role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal--small" aria-labelledby="header43">
+            <div class="slds-modal__container">
+                <div class="slds-notify_container">
+                    <div class="slds-notify slds-notify--toast slds-theme--success" role="alert">
+                        <span class="slds-assistive-text">Success!!</span>
+                        <div class="slds-notify__content slds-grid">
+                            <svg class="slds-icon slds-icon--small slds-m-right--small slds-col slds-no-flex" aria-hidden="true">
+                                <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+                            </svg>
+                            <div class="slds-col slds-align-middle">
+                                <h2 class="slds-text-heading--small">Thank you for submitting your project details to PayPal</h2> <br/>
+                                <apex:outputLink value="https://www.paypal.com">Go to PayPal.com</apex:outputLink>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </html>
+</apex:page>

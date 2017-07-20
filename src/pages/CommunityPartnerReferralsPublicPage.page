@@ -1,0 +1,232 @@
+<apex:page controller="PartnerReferralController" showHeader="false" sidebar="false" standardStylesheets="false" docType="html-5.0">
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <head>
+            <apex:slds />
+        </head>
+        <style type="text/css">
+            .errorMsg{
+            	color: red; 
+            }
+            .slds-button-custom {
+                position: relative;
+                display: inline-block;
+                padding: 2px 0 0 2px;
+                background: 0 0;
+                background-clip: border-box;
+                border: 1px solid transparent;
+                border-radius: .25rem;
+                font-size: 1.00rem;
+                line-height: 2.875rem !important;
+                width: 30.0rem;
+            }
+            .desktopContentArea{
+                padding: 20px 300px 0 300px;
+                background-color: #f4f6f9;
+                box-shadow: 0 2px 3px 0 rgba(0,0,0,.16);
+            }
+            .newFooter{
+        		padding: 0 85px 0 0;
+    		}
+            .newFooter{
+                background: #f3f3f3;
+                height: 50px;
+            }
+            .newFooter div{
+                padding: 0 15px 0 0;
+                font-size: 0.8em;
+            }
+			.newFooter div a, .THIS .newFooter div a:hover{
+                font-family: pp-sans-small-light,Heveltica Neue,Arial,sans-serif;
+                color: #000000;
+            }
+        </style>
+        <apex:form id="form1" forceSSL="true">
+            <apex:PageBlock mode="edit">
+                <apex:pageMessages id="error"/>
+                <div class="desktopContentArea">
+                    <h2 id="header43" class="slds-text-heading--medium">
+                        <div class="slds-float--left">
+                            <apex:image id="theImage" value="{!$Resource.Paypal_Logo}"/>
+                        </div>
+                        &nbsp; &nbsp; &nbsp;
+                    </h2><br/>
+                    <apex:outputPanel id="headerMessage" rendered="{!isValidReferral}">
+                        <div class="slds-text-align_left slds-container--medium">
+                            {!referral.CreatedBy.Name} from {!referral.CreatedBy.CompanyName} would like to refer your project to PayPal. PayPal needs your project details to be able to offer quick tailored support.
+                            <br/>Please complete your project details and submit it to PayPal. 
+                            Please make sure that you submit your project details in one go. Thank you.
+                        </div>
+                        
+                    </apex:outputPanel>
+                    <br/>
+                    <!-- Invalid Referral -->
+                    <apex:outputPanel id="dislpayError" rendered="{!(!isValidReferral)}">
+                        <div class="slds-notify_container">
+                            <div class="slds-notify slds-notify--toast slds-theme--error" role="alert">
+                                <span class="slds-assistive-text">Error</span>
+                                <div class="slds-notify__content slds-grid">
+                                    <svg class="slds-icon slds-icon--small slds-m-right--small slds-col slds-no-flex" aria-hidden="true">
+                                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+                                    </svg>
+                                    <div class="slds-col slds-align-middle">
+                                        <h2 class="slds-text-heading--small">{!errorMessage}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </apex:outputPanel>
+                    <!-- Error Saving the Record -->
+                    <apex:outputPanel id="errorWrapper" >
+                        <apex:outputPanel id="dislpaySaveError" rendered="{!isSaveError}">
+                            <div class="errorMsg">
+                                {!errorMessage}
+                            </div>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                    <!-- Input form -->
+                    <apex:outputPanel id="merchantInfo" rendered="{!isValidReferral}">
+                        <!-- Read only information-->
+                        <fieldset class="slds-form--compound slds-box slds-theme--default slds-container--medium">
+                            <legend class="slds-form-element__label slds-text-title--caps"></legend>
+                            <div class="slds-form-element__group">
+                                <div class="slds-form-element__row">
+                                    <div class="slds-form-element slds-size--1-of-1">
+                                        <label class="slds-form-element__label" for="output-01">Company Name</label>
+                                        <apex:inputfield value="{!referral.Merchant_Company_Name__c}" styleclass="slds-input" />
+                                    </div>
+                                    <div class="slds-form-element slds-size--1-of-1">
+                                        <label class="slds-form-element__label" for="output-01">Referred by </label>
+                                        <apex:inputText value="{!referral.CreatedBy.Name}" styleclass="slds-input" disabled="true"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <br/>
+                        <fieldset class="slds-form--compound slds-box slds-theme--default slds-container--medium">
+                            <legend class="slds-form-element__label slds-text-title--caps">Business Information</legend>
+                            <div class="slds-form-element__group">
+                                <div class="slds-form-element__row">
+                                    <div class="slds-form-element slds-size--1-of-2">
+                                        <label class="slds-form-element__label" for="output-02"><abbr class="slds-required" title="required">*</abbr>Contact Name</label>
+                                        <apex:inputfield value="{!referral.Contact_Name__c}"  styleclass="slds-input"/>
+                                    </div>
+                                    <div class="slds-form-element slds-size--2-of-2">
+                                        <label class="slds-form-element__label" for="input-03"><abbr class="slds-required" title="required">*</abbr>Contact Email</label>
+                                        <apex:inputfield value="{!referral.Contact_Email__c}" styleclass="slds-input"/>
+                                    </div>
+                                </div>
+                                <div class="slds-form-element__row">
+                                    <div class="slds-form-element slds-size--2-of-2">
+                                        <label class="slds-form-element__label" for="input-03">PayPal Account Primary Email</label>
+                                        <apex:inputfield value="{!referral.PayPal_Email__c}" styleclass="slds-input"/>
+                                    </div>
+                                    <div class="slds-form-element slds-size--2-of-2">
+                                        <label class="slds-form-element__label" for="input-04"><abbr class="slds-required" title="required">*</abbr>Website / Shop URL</label>
+                                        <apex:inputfield value="{!referral.Shop_URL__c}" styleclass="slds-input"/>
+                                    </div>
+                                </div>
+                                <div class="slds-form-element__row">
+                                    <div class="slds-form-element slds-size--1-of-2">
+                                        <label class="slds-form-element__label" for="input-04"><abbr class="slds-required" title="required">*</abbr>Expected Annual Online Sales</label>
+                                        <apex:inputfield value="{!referral.TOV__c}" styleclass="slds-input" />
+                                    </div>
+                                    <div class="slds-form-element slds-size--2-of-2">
+                                        <label class="slds-form-element__label" for="input-06"><abbr class="slds-required" title="required">*</abbr>Phone</label>
+                                        <apex:inputfield value="{!referral.Phone__c}" styleclass="slds-input" />
+                                    </div>
+                                </div>
+                                <div class="slds-form-element__row">
+                                    <div class="slds-form-element slds-size--1-of-2">
+                                        <label class="slds-form-element__label" for="input-06">Technical Contact</label>
+                                        <apex:inputfield value="{!referral.Technical_Contact__c}" styleclass="slds-input" />
+                                    </div>
+                                    <div class="slds-form-element slds-size--1-of-2">
+                                        <label class="slds-form-element__label" for="input-06">Type of Project</label>
+                                        <apex:inputfield value="{!referral.Type_Of_Project__c}" styleclass="slds-input"/>
+                                    </div>
+                                </div>                                    
+                            </div>
+                        </fieldset>
+                        <br />
+                        <fieldset class="slds-form--compound slds-box slds-theme--default slds-container--medium">
+                            <legend class="slds-form-element__label slds-text-title--caps">Business Address </legend>
+                            <div class="slds-form-element__group">
+                                <div class="slds-form-element__row">
+                                    <div class="slds-form-element slds-size--1-of-1">
+                                        <label class="slds-form-element__label" for="street"><abbr class="slds-required" title="required">*</abbr>Street</label>
+                                        <apex:inputfield value="{!referral.Street__c}" styleclass="slds-input"/>
+                                    </div>
+                                    <div class="slds-form-element slds-size--2-of-2">
+                                        <label class="slds-form-element__label" for="city"><abbr class="slds-required" title="required">*</abbr>City</label>
+                                        <apex:inputfield value="{!referral.City__c}"  styleclass="slds-input"/>
+                                    </div>
+                                </div>
+                                <div class="slds-form-element__row">
+                                    <div class="slds-form-element slds-size--1-of-1">
+                                        <label class="slds-form-element__label" for="state"><abbr class="slds-required" title="required">*</abbr>State/Provence</label>
+                                        <apex:inputfield value="{!referral.State_Provence__c}" styleclass="slds-input"/>
+                                    </div>
+                                    <div class="slds-form-element slds-size--2-of-2">
+                                        <label class="slds-form-element__label" for="country"><abbr class="slds-required" title="required">*</abbr>Country</label>
+                                        <apex:inputfield value="{!referral.Country__c}"  styleclass="slds-input"/>
+                                    </div>
+                                </div>
+                                <div class="slds-form-element__row">
+                                    <div class="slds-form-element slds-size--1-of-1">
+                                        <label class="slds-form-element__label" for="zipcode"><abbr class="slds-required" title="required">*</abbr>Postal Code</label>
+                                        <apex:inputfield value="{!referral.Zip_Post_Code__c}" styleclass="slds-input"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <!-- Terms and Conditions section -->
+                        <br/>    
+                        <div class="slds-form-element">
+                            <div class="slds-form-element__control">
+                                <!--<input type="checkbox" name="options" id="checkbox-149"/>-->
+                                <label class="slds-checkbox__label" for="checkbox-149">
+                                    <span class="slds-form-element__label"> 
+                                        <apex:inputfield value="{!referral.I_Accept_Terms_and_Conditions__c}" />
+                                        <abbr class="slds-required" title="required">*</abbr> 
+                                        I agree to 
+                                        <apex:outputLink value="https://www.paypal.com/uk/webapps/mpp/ua/privacy-full" target="_blank"> PayPal's Privacy Policy </apex:outputLink>
+                                        and that PayPal may contact me using the details I have provided.
+                                    </span>
+                                </label>
+                                
+                            </div>
+                        </div>
+                    </apex:outputPanel>
+                    <div class="slds-grid slds-grid--align-center">
+                        <apex:commandButton action="{!extSave}" id="SubmitDetails" 
+                                            value="Submit Details" 
+                                            styleClass="slds-button-custom slds-button--brand slds-order--3" 
+                                            rendered="{!isValidReferral}" 
+                                            rerender="merchantInfo,dislpayError,errorWrapper"
+                                            status="loadingAction"/>
+                    </div>
+                    <apex:outputPanel >
+                        <apex:actionStatus id="loadingAction" >
+                            <apex:facet name="start">
+                                <div class="slds-spinner_container">
+                                    <div role="status" class="slds-spinner slds-spinner--x-small slds-spinner--brand">
+                                        <span class="slds-assistive-text">Saving</span>
+                                        <div class="slds-spinner__dot-a"></div>
+                                        <div class="slds-spinner__dot-b"></div>
+                                    </div>
+                                </div>             
+                            </apex:facet>
+                        </apex:actionStatus>
+                    </apex:outputPanel>
+                </div>
+                <!-- footer-->
+                <div class="newFooter slds-grid slds-grid_vertical-align-center slds-grid_align-end">
+                    <div>© 2017</div>
+                    <div><a href="https://www.paypal.com/us/webapps/mpp/ua/privacy-full" target="_blank">Privacy</a></div>
+                    <div><a href="https://www.paypal.com/us/webapps/mpp/ua/legalhub-full" target="_blank">Legal</a></div>
+                    <div><a href="">Feedback</a></div>
+                </div>
+            </apex:PageBlock>
+        </apex:form>
+    </html>
+</apex:page>
